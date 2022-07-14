@@ -85,12 +85,21 @@ void I2cError(int Slave, int ErrorNr)
 //-----------------------------------------------------------------------------
 bool AddressProbe(int I2cSlaveAddress)
 {
-  TK_WIRE.requestFrom(I2cSlaveAddress, 1);    // request 2 bytes from slave device
+#ifdef ESP_PLATFORM
+   // specific for ESP32 (might work for other platforms too, just not tested)
+   Wire.beginTransmission(I2cSlaveAddress);
+   int error = Wire.endTransmission();
+   if (error == 0) return true;  // slave found
+   return false;
+#else
+   // 'classic' probe
+   TK_WIRE.requestFrom(I2cSlaveAddress, 1);    // request 1 byte from slave device
 
-  if (TK_WIRE.available() == 0)   return false;  // slave not present
+   if (TK_WIRE.available() == 0)   return false;  // slave not present
 
-  TK_WIRE.read();  // flush buffer
-  return true;  // slave present
+   TK_WIRE.read();  // flush buffer
+   return true;  // slave present
+#endif
 }
 
 //-----------------------------------------------------------------------------

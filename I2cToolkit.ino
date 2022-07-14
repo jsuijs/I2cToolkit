@@ -10,7 +10,7 @@
    //HardwareSerial Serial(PA10, PA9);   // RX, TX
    HardwareSerial Serial(PA3, PA2);   // RX, TX
    #define TK_SERIAL Serial
-   
+
    extern "C" int _write(int __attribute__ ((unused)) file, char *buffer, int size)
       { return Serial.write(buffer, size); }
 
@@ -21,6 +21,11 @@
 
 #ifdef ARDUINO_ARCH_RP2040
    #define TK_SERIAL Serial1 // Note: for printf, select this serial port in tools->'Debug Port'
+   #define TK_WIRE Wire
+#endif
+
+#ifdef ESP_PLATFORM
+   #define TK_SERIAL Serial
    #define TK_WIRE Wire
 #endif
 
